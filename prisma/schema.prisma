@@ -1,0 +1,39 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model BuildLog {
+  id          Int      @id @default(autoincrement())
+  day         Int
+  module      String
+  title       String
+  description String   @db.Text
+  commitSha   String?
+  commitMsg   String?
+  filesChanged String[]
+  tags        String[]
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model GitHubCache {
+  id          String   @id
+  data        Json
+  cachedAt    DateTime @default(now())
+}
+
+model ContactMessage {
+  id        Int      @id @default(autoincrement())
+  name      String
+  email     String
+  company   String?
+  message   String   @db.Text
+  type      String   @default("general")
+  createdAt DateTime @default(now())
+  isRead    Boolean  @default(false)
+}
