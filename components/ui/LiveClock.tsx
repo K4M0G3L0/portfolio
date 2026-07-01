@@ -38,22 +38,30 @@ export function LiveClock() {
     return () => clearInterval(interval);
   }, []);
 
-  if (!mounted) {
-    return (
-      <div className="flex items-center gap-2 text-xs font-mono text-text-tertiary opacity-0">
-        <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" />
-        <span>Loading...</span>
-      </div>
-    );
-  }
+  if (!mounted) return null;
 
   return (
-    <div className="flex items-center gap-2 text-xs font-mono text-text-tertiary">
-      <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse flex-shrink-0" />
+    <div style={{
+      display: "flex",
+      alignItems: "center",
+      gap: "8px",
+      fontSize: "12px",
+      fontFamily: "monospace",
+      color: "#9898A6",
+    }}>
+      <span style={{
+        width: "6px",
+        height: "6px",
+        borderRadius: "50%",
+        backgroundColor: "#4ade80",
+        display: "inline-block",
+        flexShrink: 0,
+        animation: "pulse 2s infinite",
+      }} />
       <span>{date}</span>
-      <span className="text-text-tertiary opacity-40">·</span>
-      <span className="text-text-primary tabular-nums">{time}</span>
-      <span className="text-accent-violet font-medium">CAT</span>
+      <span style={{ opacity: 0.4 }}>·</span>
+      <span style={{ color: "#F4F4F6", fontVariantNumeric: "tabular-nums" }}>{time}</span>
+      <span style={{ color: "#8B5CF6", fontWeight: 500 }}>CAT</span>
     </div>
   );
-}
+}v
