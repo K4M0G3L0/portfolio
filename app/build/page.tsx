@@ -3,7 +3,8 @@ import Link from "next/link";
 import { getBuildProgress, expandCommitMessage, getRecentCommits } from "@/lib/github";
 import { BUILD_TIMELINE } from "@/lib/data";
 import { Badge } from "@/components/ui/Badge";
-import { formatDate, timeAgo } from "@/lib/utils";
+import { timeAgo } from "@/lib/utils";
+import { LiveClock } from "@/components/ui/LiveClock";
 
 export const metadata: Metadata = {
   title: "LUMA AIOS Live Build",
@@ -12,6 +13,21 @@ export const metadata: Metadata = {
 
 export const revalidate = 300;
 
+const BUILD_START = new Date("2026-06-17T00:00:00+02:00");
+const TOTAL_DAYS = 90;
+
+function getAutoDay(): number {
+  const nowCAT = new Date(
+    new Date().toLocaleString("en-US", { timeZone: "Africa/Johannesburg" })
+  );
+  const startCAT = new Date(
+    BUILD_START.toLocaleString("en-US", { timeZone: "Africa/Johannesburg" })
+  );
+  const msPerDay = 1000 * 60 * 60 * 24;
+  const day = Math.floor((nowCAT.getTime() - startCAT.getTime()) / msPerDay) + 1;
+  return Math.max(1, Math.min(day, TOTAL_DAYS));
+}
+
 const MODULE_DESCRIPTIONS: Record<string, string> = {
   "Core Architecture": "FastAPI backend, React frontend, PostgreSQL, JWT auth",
   "Business DNA Engine": "Organizations, profiles, capabilities, certifications",
@@ -19,6 +35,8 @@ const MODULE_DESCRIPTIONS: Record<string, string> = {
   "Multi-Agent Framework": "CEO + Procurement + Finance + Logistics + Security agents",
   "BloomOS Intelligence": "Tender scoring, bid decisions, compliance checking",
   "Command Center": "Dashboard, LUMA Score, agent monitoring, AI insights",
+  "Transparency Engine": "Decision Passports, evidence tracing, confidence scoring",
+  "Action Intelligence Engine": "Proactive events, priority scoring, smart notifications",
   "Flowlink Handoff": "Winner → supplier coordination pipeline",
   "MoneyOS": "Invoice intelligence, cashflow analysis, financial risk",
   "BuildOS": "Construction AI, CIDB compliance, project scheduling",
@@ -33,18 +51,22 @@ export default async function BuildPage() {
     getRecentCommits("luma-aios", 15),
   ]);
 
-  const completedModules = BUILD_TIMELINE.filter((t) => t.status === "complete");
-  const buildingModules = BUILD_TIMELINE.filter((t) => t.status === "building");
-  const plannedModules = BUILD_TIMELINE.filter((t) => t.status === "planned");
+  const currentDay = getAutoDay();
+  const percentComplete = Math.round((currentDay / TOTAL_DAYS) * 100);
 
   return (
     <div className="max-w-7xl mx-auto px-6 py-16">
+
       {/* Header */}
       <div className="mb-16">
-        <div className="flex items-center gap-2 mb-6">
-          <Badge variant="emerald">Live Build</Badge>
-          <Badge variant="outline">Public · 90 Days</Badge>
+        <div className="flex items-center justify-between flex-wrap gap-4 mb-6">
+          <div className="flex items-center gap-2">
+            <Badge variant="emerald">Live Build</Badge>
+            <Badge variant="outline">Public · 90 Days</Badge>
+          </div>
+          <LiveClock />
         </div>
+
         <h1 className="text-4xl md:text-5xl font-medium text-text-primary mb-4 leading-tight">
           Building LUMA AIOS<br />
           <span className="text-text-secondary font-light">in public, from Day 1.</span>
@@ -57,28 +79,29 @@ export default async function BuildPage() {
 
       {/* Progress Overview */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-12">
+
         <div className="md:col-span-2 bg-base-800 border border-border rounded-xl p-6">
           <div className="flex items-start justify-between mb-6">
             <div>
               <div className="text-xs font-mono text-text-tertiary uppercase tracking-widest mb-1">Current Day</div>
               <div className="flex items-baseline gap-2">
-                <span className="text-5xl font-medium text-text-primary">{progress.currentDay}</span>
-                <span className="text-text-tertiary text-xl">/ {progress.totalDays}</span>
+                <span className="text-5xl font-medium text-text-primary">{currentDay}</span>
+                <span className="text-text-tertiary text-xl">/ {TOTAL_DAYS}</span>
               </div>
             </div>
             <div className="text-right">
               <div className="text-xs font-mono text-text-tertiary uppercase tracking-widest mb-1">Complete</div>
-              <div className="text-3xl font-medium gradient-text">{progress.percentComplete}%</div>
+              <div className="text-3xl font-medium gradient-text">{percentComplete}%</div>
             </div>
           </div>
           <div className="w-full h-2 bg-base-700 rounded-full overflow-hidden mb-4">
             <div
               className="h-full bg-gradient-to-r from-accent-violet to-accent-cyan rounded-full transition-all"
-              style={{ width: `${progress.percentComplete}%` }}
+              style={{ width: `${percentComplete}%` }}
             />
           </div>
           <div className="flex justify-between text-xs font-mono text-text-tertiary">
-            <span>Day 1 · Foundation</span>
+            <span>Day 1 · 17 Jun 2026</span>
             <span>Day 90 · Launch</span>
           </div>
         </div>
@@ -96,26 +119,30 @@ export default async function BuildPage() {
         </div>
 
         <div className="bg-base-800 border border-border rounded-xl p-6">
-          {progress.stats && (
+          {progress.stats ? (
             <>
-              <div className="text-xs font-mono text-text-tertiary uppercase tracking-widest mb-4">GitHub · luma-aios</div>
+              <div className="text-xs font-mono text-text-tertiary uppercase tracking-widest mb-4">
+                GitHub · luma-aios
+              </div>
               <div className="space-y-2">
                 <div className="flex justify-between text-sm">
                   <span className="text-text-tertiary">Stars</span>
                   <span className="text-text-primary font-mono">{progress.stats.stars}</span>
                 </div>
                 <div className="flex justify-between text-sm">
-                  <span className="text-text-tertiary">Primary Lang</span>
+                  <span className="text-text-tertiary">Language</span>
                   <span className="text-text-primary font-mono">{progress.stats.language}</span>
                 </div>
                 <div className="flex justify-between text-sm">
-                  <span className="text-text-tertiary">Last Push</span>
+                  <span className="text-text-tertiary">Last push</span>
                   <span className="text-text-primary font-mono">{timeAgo(progress.stats.lastCommit)}</span>
                 </div>
               </div>
             </>
+          ) : (
+            <div className="text-text-tertiary text-xs">GitHub stats unavailable</div>
           )}
-          <a
+          
             href="https://github.com/K4M0G3L0/luma-aios"
             target="_blank"
             rel="noopener noreferrer"
@@ -126,7 +153,27 @@ export default async function BuildPage() {
         </div>
       </div>
 
+      {/* Latest commit banner */}
+      {progress.lastCommit && (
+        <div className="bg-base-800 border border-emerald-500/20 rounded-xl p-4 mb-12 flex items-center gap-4 flex-wrap">
+          <div className="flex items-center gap-2 flex-shrink-0">
+            <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+            <span className="text-xs font-mono text-emerald-400 uppercase tracking-widest">Latest commit</span>
+          </div>
+          <code className="text-xs font-mono text-accent-violet bg-accent-violet/10 px-2 py-0.5 rounded flex-shrink-0">
+            {progress.lastCommit.sha}
+          </code>
+          <span className="text-sm text-text-secondary flex-1 min-w-0 truncate">
+            {progress.lastCommit.message}
+          </span>
+          <span className="text-xs text-text-tertiary font-mono flex-shrink-0">
+            {timeAgo(progress.lastCommit.date)}
+          </span>
+        </div>
+      )}
+
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+
         {/* Build Timeline */}
         <div className="lg:col-span-2">
           <h2 className="text-lg font-medium text-text-primary mb-6">Build Timeline</h2>
@@ -142,16 +189,14 @@ export default async function BuildPage() {
                     : "bg-base-800/40 border-border/50"
                 }`}
               >
-                {/* Day number */}
                 <div className="flex-shrink-0 w-12 text-right">
                   <span className="text-xs font-mono text-text-tertiary">D{item.day}</span>
                 </div>
 
-                {/* Status dot */}
                 <div className="flex-shrink-0 mt-0.5">
                   <div className={`w-2.5 h-2.5 rounded-full mt-0.5 ${
-                    item.status === "complete" ? "bg-emerald-400" :
-                    item.status === "building" ? "bg-accent-violet animate-pulse" :
+                    item.status === "complete"  ? "bg-emerald-400" :
+                    item.status === "building"  ? "bg-accent-violet animate-pulse" :
                     "bg-base-600"
                   }`} />
                 </div>
@@ -181,7 +226,7 @@ export default async function BuildPage() {
           </div>
         </div>
 
-        {/* Commit feed */}
+        {/* Engineering log */}
         <div>
           <h2 className="text-lg font-medium text-text-primary mb-6">Engineering Log</h2>
           <div className="space-y-3">
@@ -197,13 +242,13 @@ export default async function BuildPage() {
                   <span className="text-xs text-text-tertiary font-mono">{timeAgo(commit.date)}</span>
                 </div>
                 <p className="text-sm text-text-secondary mb-2 leading-relaxed">{commit.message}</p>
-                <p className="text-xs text-text-tertiary leading-relaxed italic">
-                  {expandCommitMessage(commit.message) !== commit.message
-                    ? expandCommitMessage(commit.message)
-                    : null}
-                </p>
+                {expandCommitMessage(commit.message) !== commit.message && (
+                  <p className="text-xs text-text-tertiary leading-relaxed italic">
+                    {expandCommitMessage(commit.message)}
+                  </p>
+                )}
                 {commit.url !== "#" && (
-                  <a
+                  
                     href={commit.url}
                     target="_blank"
                     rel="noopener noreferrer"
@@ -218,30 +263,27 @@ export default async function BuildPage() {
         </div>
       </div>
 
-      {/* Architecture Overview */}
+      {/* System Architecture */}
       <div className="mt-16">
         <h2 className="text-lg font-medium text-text-primary mb-8">System Architecture</h2>
         <div className="bg-base-800 border border-border rounded-xl p-8">
           <div className="grid grid-cols-1 md:grid-cols-5 gap-6 items-center">
-            {/* Core */}
             <div className="md:col-span-1 bg-base-700 border border-accent-violet/30 rounded-lg p-4 text-center">
               <div className="text-xs font-mono text-accent-violet mb-1 uppercase tracking-widest">Core</div>
               <div className="text-text-primary font-medium text-sm">LUMA AIOS</div>
               <div className="text-text-tertiary text-xs mt-1">AI OS</div>
             </div>
 
-            {/* Arrow */}
             <div className="hidden md:flex md:col-span-1 items-center justify-center">
               <div className="text-text-tertiary">→</div>
             </div>
 
-            {/* Agents */}
             <div className="md:col-span-3 grid grid-cols-2 gap-3">
               {[
-                { name: "BloomOS", label: "Opportunities", color: "#10B981" },
-                { name: "Flowlink", label: "Execution", color: "#06B6D4" },
-                { name: "MoneyOS", label: "Finance", color: "#F59E0B" },
-                { name: "BuildOS", label: "Construction", color: "#8B5CF6" },
+                { name: "BloomOS",  label: "Opportunities", color: "#10B981" },
+                { name: "Flowlink", label: "Execution",     color: "#06B6D4" },
+                { name: "MoneyOS",  label: "Finance",       color: "#F59E0B" },
+                { name: "BuildOS",  label: "Construction",  color: "#8B5CF6" },
               ].map((s) => (
                 <div
                   key={s.name}
@@ -265,16 +307,18 @@ export default async function BuildPage() {
               <span>JWT Auth · RBAC</span>
               <span>Vector Embeddings</span>
               <span>RAG Pipeline</span>
+              <span>13,000+ lines of code</span>
+              <span>53 API endpoints</span>
             </div>
           </div>
         </div>
       </div>
 
-      {/* Subscribe / Follow CTA */}
+      {/* CTA */}
       <div className="mt-16 text-center">
         <p className="text-text-secondary mb-4">This build updates every time I push code.</p>
-        <div className="flex items-center justify-center gap-4">
-          <a
+        <div className="flex items-center justify-center gap-4 flex-wrap">
+          
             href="https://github.com/K4M0G3L0/luma-aios"
             target="_blank"
             rel="noopener noreferrer"
@@ -290,6 +334,7 @@ export default async function BuildPage() {
           </Link>
         </div>
       </div>
+
     </div>
   );
 }

@@ -7,6 +7,22 @@ const octokit = new Octokit({
 const GITHUB_USERNAME = "K4M0G3L0";
 const LUMA_REPO = "luma-aios";
 
+// Auto-calculate build day from real start date in CAT timezone
+const BUILD_START = new Date("2026-06-17T00:00:00+02:00");
+const TOTAL_DAYS = 90;
+
+function getAutoDay(): number {
+  const nowCAT = new Date(
+    new Date().toLocaleString("en-US", { timeZone: "Africa/Johannesburg" })
+  );
+  const startCAT = new Date(
+    BUILD_START.toLocaleString("en-US", { timeZone: "Africa/Johannesburg" })
+  );
+  const msPerDay = 1000 * 60 * 60 * 24;
+  const day = Math.floor((nowCAT.getTime() - startCAT.getTime()) / msPerDay) + 1;
+  return Math.max(1, Math.min(day, TOTAL_DAYS));
+}
+
 export interface GitHubCommit {
   sha: string;
   message: string;
@@ -54,7 +70,10 @@ function setCache(key: string, data: unknown): void {
   cache.set(key, { data, timestamp: Date.now() });
 }
 
-export async function getRecentCommits(repo: string = LUMA_REPO, count: number = 10): Promise<GitHubCommit[]> {
+export async function getRecentCommits(
+  repo: string = LUMA_REPO,
+  count: number = 10
+): Promise<GitHubCommit[]> {
   const cacheKey = `commits-${repo}-${count}`;
   const cached = getCache<GitHubCommit[]>(cacheKey);
   if (cached) return cached;
@@ -82,7 +101,9 @@ export async function getRecentCommits(repo: string = LUMA_REPO, count: number =
   }
 }
 
-export async function getRepoStats(repo: string = LUMA_REPO): Promise<RepoStats | null> {
+export async function getRepoStats(
+  repo: string = LUMA_REPO
+): Promise<RepoStats | null> {
   const cacheKey = `stats-${repo}`;
   const cached = getCache<RepoStats>(cacheKey);
   if (cached) return cached;
@@ -118,15 +139,14 @@ export async function getBuildProgress(): Promise<BuildProgress> {
     getRepoStats(LUMA_REPO),
   ]);
 
-  // Parse day number from commit messages or use env var
-  const currentDay = parseInt(process.env.BUILD_CURRENT_DAY || "6");
-  const totalDays = 90;
-  const currentModule = process.env.BUILD_CURRENT_MODULE || "Command Center";
+  const currentDay = getAutoDay();
+  const currentModule =
+    process.env.BUILD_CURRENT_MODULE || "Action Intelligence Engine";
 
   const result: BuildProgress = {
     currentDay,
-    totalDays,
-    percentComplete: Math.round((currentDay / totalDays) * 100),
+    totalDays: TOTAL_DAYS,
+    percentComplete: Math.round((currentDay / TOTAL_DAYS) * 100),
     currentModule,
     lastCommit: commits[0] || null,
     recentCommits: commits,
@@ -137,7 +157,6 @@ export async function getBuildProgress(): Promise<BuildProgress> {
   return result;
 }
 
-// Generate an AI-style summary of a commit message
 export function expandCommitMessage(commitMsg: string): string {
   const expansions: Record<string, string> = {
     "feat: Day 1": "Initialized LUMA AIOS core architecture — FastAPI backend, React frontend, PostgreSQL database, and JWT authentication foundation.",
@@ -146,6 +165,7 @@ export function expandCommitMessage(commitMsg: string): string {
     "feat: Day 4": "Activated Multi-Agent Intelligence Framework — CEO Agent orchestrating Procurement, Finance, Logistics, and Security specialist agents.",
     "feat: Day 5": "BloomOS Opportunity Intelligence live — tender analysis, PPPFA scoring, bid decisions, and compliance checking.",
     "feat: Day 6": "LUMA Command Center deployed — real-time agent monitoring, LUMA Score algorithm, intelligence feed, and AI-generated recommendations.",
+    "feat: Day 7": "Transparency Engine and Action Intelligence Engine complete — Decision Passports, confidence scoring, proactive notifications, and escalation.",
   };
 
   for (const [key, expansion] of Object.entries(expansions)) {
@@ -159,10 +179,40 @@ export function expandCommitMessage(commitMsg: string): string {
 
 function getMockCommits(): GitHubCommit[] {
   return [
-    { sha: "a1b2c3d", message: "feat: Day 6 - LUMA Command Center (dashboard, LUMA Score, agent monitoring)", date: new Date().toISOString(), author: "K4M0G3L0", url: "#" },
-    { sha: "e4f5g6h", message: "feat: Day 5 - BloomOS Opportunity Intelligence (tender engine + scoring + compliance)", date: new Date(Date.now() - 86400000).toISOString(), author: "K4M0G3L0", url: "#" },
-    { sha: "i7j8k9l", message: "feat: Day 4 - Multi-Agent Intelligence Framework (CEO + 4 specialists)", date: new Date(Date.now() - 172800000).toISOString(), author: "K4M0G3L0", url: "#" },
-    { sha: "m1n2o3p", message: "feat: Day 3 - LUMA Memory Core (structured memory + RAG + vector embeddings)", date: new Date(Date.now() - 259200000).toISOString(), author: "K4M0G3L0", url: "#" },
-    { sha: "q4r5s6t", message: "feat: Day 2 complete - profiles, memory core, multi-agent intelligence", date: new Date(Date.now() - 345600000).toISOString(), author: "K4M0G3L0", url: "#" },
+    {
+      sha: "a1b2c3d",
+      message: "feat: Day 7 - Action Intelligence Engine (events, priority scoring, notifications, escalation)",
+      date: new Date().toISOString(),
+      author: "K4M0G3L0",
+      url: "#",
+    },
+    {
+      sha: "e4f5g6h",
+      message: "feat: Day 6.5 - Transparency Engine (Decision Passports, confidence scoring, human review)",
+      date: new Date(Date.now() - 86400000).toISOString(),
+      author: "K4M0G3L0",
+      url: "#",
+    },
+    {
+      sha: "i7j8k9l",
+      message: "feat: Day 6 - LUMA Command Center (dashboard, LUMA Score, agent monitoring)",
+      date: new Date(Date.now() - 172800000).toISOString(),
+      author: "K4M0G3L0",
+      url: "#",
+    },
+    {
+      sha: "m1n2o3p",
+      message: "feat: Day 5 - BloomOS Opportunity Intelligence (tender engine + scoring + compliance)",
+      date: new Date(Date.now() - 259200000).toISOString(),
+      author: "K4M0G3L0",
+      url: "#",
+    },
+    {
+      sha: "q4r5s6t",
+      message: "feat: Day 4 - Multi-Agent Intelligence Framework (CEO + 4 specialists)",
+      date: new Date(Date.now() - 345600000).toISOString(),
+      author: "K4M0G3L0",
+      url: "#",
+    },
   ];
 }
