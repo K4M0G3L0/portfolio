@@ -44,10 +44,10 @@ const PROJECT_DETAILS: Record<string, {
       "Storing decisions back to memory closes the intelligence loop and improves future answers",
     ],
     metrics: [
-      { label: "Build Days", value: "6 / 90" },
-      { label: "API Routes", value: "53" },
+      { label: "Build Days", value: "8 / 90" },
+      { label: "API Routes", value: "53+" },
       { label: "AI Agents", value: "5" },
-      { label: "DB Tables", value: "18+" },
+      { label: "DB Tables", value: "20+" },
     ],
   },
   "bloomos": {
@@ -55,12 +55,13 @@ const PROJECT_DETAILS: Record<string, {
     industry: "Construction · Government Procurement · South Africa",
     why: "South African public procurement is R800B+ annually. The regulatory complexity (PPPFA, BBBEE, CIDB, CSD) creates a compliance barrier that favors larger firms with dedicated procurement teams. BloomOS levels the playing field.",
     architecture: [
-      "Requirement Extractor parses tender documents (PDF/TXT) using LLM to extract CIDB, BBBEE, scope, mandatory documents",
+      "Requirement Extractor parses tender documents using LLM to extract CIDB, BBBEE, scope, mandatory documents",
       "Opportunity Scorer compares tender requirements against company DNA in structured memory",
       "Scoring dimensions: CIDB match (30%), BBBEE advantage (20%), experience (25%), location (10%), compliance (15%)",
       "Bid Decision Engine produces STRONG_BID / CONSIDER / PARTNER_REQUIRED / DO_NOT_BID with confidence",
       "Compliance Checker assesses submission readiness and lists missing documents",
       "Proposal Assistant drafts bid sections using company memory and tender context",
+      "When bid is marked Won, publishes TenderWon event — Flowlink and CEO Agent subscribe independently",
     ],
     businessValue: [
       "Opportunity scoring in seconds vs hours of manual eligibility checking",
@@ -72,6 +73,7 @@ const PROJECT_DETAILS: Record<string, {
       "The CIDB grading system has nuances that require careful rule encoding",
       "Confidence scores are more useful than binary recommendations",
       "Compliance checking prevents the most avoidable bid failures",
+      "Event-driven handoff to Flowlink keeps BloomOS and execution layer fully decoupled",
     ],
     metrics: [
       { label: "Opportunity Score", value: "91%" },
@@ -83,26 +85,33 @@ const PROJECT_DETAILS: Record<string, {
   "flowlink": {
     problem: "After winning a tender, execution becomes the risk. Supplier coordination is manual, proof of service is paper-based, and cashflow management against government payment timelines is guesswork.",
     industry: "Logistics · Supply Chain · Construction",
-    why: "The gap between winning a bid and successfully completing a project is where most construction SMEs fail. Flowlink closes that gap with AI-coordinated execution intelligence.",
+    why: "The gap between winning a bid and successfully completing a project is where most construction SMEs fail. Flowlink closes that gap with event-driven execution intelligence.",
     architecture: [
-      "Receives handoff from BloomOS when a tender bid is marked Won",
-      "Creates supplier coordination tasks based on tender scope",
-      "Tracks proof of service with SHA-256 document hashing for tamper-evident records",
-      "Monitors project cashflow against tender payment milestone schedule",
-      "Logistics Agent evaluates execution capacity before project commitment",
+      "Subscribes to TenderWon domain event published by BloomOS — no direct coupling",
+      "Auto-creates project workspace with sequential project number (FL-2026-XXXX)",
+      "Generates payment milestones scaled to contract value (3 milestones for under R1M, 5 for over R5M)",
+      "Supplier coordinator tracks assignments, delivery dates, and delay detection with Action events",
+      "SHA-256 document hashing creates tamper-evident proof-of-service records",
+      "Cashflow tracker monitors expected vs actual payments and predicts gaps 30 days ahead",
+      "Risk monitor scans schedule, supplier, cashflow, and compliance dimensions every 30 minutes",
     ],
     businessValue: [
-      "Supplier coordination time reduced significantly",
-      "Tamper-evident proof of service protects against disputes",
-      "Cashflow warnings before payment delays become crises",
+      "Zero manual handoff from procurement to execution — TenderWon event triggers everything",
+      "SHA-256 tamper-evident delivery records protect against supplier disputes",
+      "Cashflow gap warnings before payment delays become crises",
+      "Risk monitor flags issues proactively — not after the fact",
     ],
     lessons: [
-      "The handoff from procurement to execution is where most value is lost",
+      "Event-driven architecture makes the system extensible — BuildOS can subscribe to TenderWon with no BloomOS changes",
       "Hash-based proof of service is simple to implement and legally significant",
+      "Milestone auto-generation based on contract value removes the biggest setup friction",
+      "Fail-isolated event handlers mean one subscriber failing never stops the others",
     ],
     metrics: [
-      { label: "Status", value: "Building" },
-      { label: "Day", value: "7 / 90" },
+      { label: "Tests", value: "8 / 8" },
+      { label: "Status", value: "Complete" },
+      { label: "Day", value: "8 / 90" },
+      { label: "Architecture", value: "Event-Driven" },
     ],
   },
   "trading-intelligence": {
@@ -152,7 +161,7 @@ export default function ProjectPage({ params }: Props) {
   return (
     <div className="max-w-4xl mx-auto px-6 py-16">
       <Link href="/projects" className="text-text-tertiary hover:text-text-primary text-sm transition-colors mb-8 block">
-        ← All projects
+        All projects
       </Link>
 
       <div className="mb-12">
@@ -242,7 +251,7 @@ export default function ProjectPage({ params }: Props) {
 
       {system.github && (
         <div className="border-t border-border pt-8">
-          
+          <a
             href={system.github}
             target="_blank"
             rel="noopener noreferrer"

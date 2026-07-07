@@ -37,7 +37,7 @@ const MODULE_DESCRIPTIONS: Record<string, string> = {
   "Command Center": "Dashboard, LUMA Score, agent monitoring, AI insights",
   "Transparency Engine": "Decision Passports, evidence tracing, confidence scoring",
   "Action Intelligence Engine": "Proactive events, priority scoring, smart notifications",
-  "Flowlink Handoff": "Winner → supplier coordination pipeline",
+  "Flowlink — Execution Intelligence": "Event-driven execution: TenderWon event bus, project activation, suppliers, milestones",
   "MoneyOS": "Invoice intelligence, cashflow analysis, financial risk",
   "BuildOS": "Construction AI, CIDB compliance, project scheduling",
   "Security Intelligence": "Fraud detection, supplier verification, POPIA",
@@ -142,7 +142,7 @@ export default async function BuildPage() {
           ) : (
             <div className="text-text-tertiary text-xs">GitHub stats unavailable</div>
           )}
-          
+          <a
             href="https://github.com/K4M0G3L0/luma-aios"
             target="_blank"
             rel="noopener noreferrer"
@@ -248,7 +248,7 @@ export default async function BuildPage() {
                   </p>
                 )}
                 {commit.url !== "#" && (
-                  
+                  <a
                     href={commit.url}
                     target="_blank"
                     rel="noopener noreferrer"
@@ -318,7 +318,7 @@ export default async function BuildPage() {
       <div className="mt-16 text-center">
         <p className="text-text-secondary mb-4">This build updates every time I push code.</p>
         <div className="flex items-center justify-center gap-4 flex-wrap">
-          
+          <a
             href="https://github.com/K4M0G3L0/luma-aios"
             target="_blank"
             rel="noopener noreferrer"

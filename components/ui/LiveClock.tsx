@@ -64,4 +64,4 @@ export function LiveClock() {
       <span style={{ color: "#8B5CF6", fontWeight: 500 }}>CAT</span>
     </div>
   );
-}v
+}
