@@ -141,7 +141,7 @@ export async function getBuildProgress(): Promise<BuildProgress> {
 
   const currentDay = getAutoDay();
   const currentModule =
-    process.env.BUILD_CURRENT_MODULE || "BuildOS";
+    process.env.BUILD_CURRENT_MODULE || "CapitalOS";
 
   const result: BuildProgress = {
     currentDay,
