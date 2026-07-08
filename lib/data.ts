@@ -97,7 +97,7 @@ export const BUILD_TIMELINE = [
   { day: 6, module: "Transparency Engine", status: "complete", description: "Decision Passports, evidence tracing, confidence scoring, human review" },
   { day: 7, module: "Action Intelligence Engine", status: "complete", description: "Proactive events, priority scoring, smart notifications, escalation" },
   { day: 8, module: "Flowlink — Execution Intelligence", status: "complete", description: "Event-driven architecture: TenderWon event bus, project activation, SHA-256 proof-of-service, cashflow tracking, risk monitor — 8/8 tests passing" },
-  { day: 9, module: "MoneyOS", status: "building", description: "Invoice intelligence, cashflow forecasting, financial risk alerts, margin tracking" },
+  { day: 9, module: "MoneyOS", status: "complete", description: "VAT-compliant invoice engine, 13-week cashflow forecasting, margin tracking, financial risk monitor - 8/8 tests passing" },{ day: 10, module: "BuildOS", status: "building", description: "Construction project intelligence, CIDB compliance tracking, project scheduling" },
   { day: 21, module: "BuildOS", status: "planned", description: "Construction project intelligence, CIDB compliance tracking" },
   { day: 30, module: "Security Intelligence", status: "planned", description: "Fraud detection, supplier verification, audit trails" },
   { day: 60, module: "Cloud Deployment", status: "planned", description: "AWS/GCP production deployment, monitoring, scaling" },
