@@ -1,0 +1,5 @@
+﻿content = open(r'C:\Users\kgash\portfolio\app\page.tsx', encoding='utf-8').read()
+content = content.replace('Building LUMA AIOS · Day {buildProgress.currentDay}/{buildProgress.totalDays}', 'LUMA AIOS · Product Validation Phase')
+content = content.replace('{buildProgress.percentComplete}% complete', 'B2B SaaS · Building Live')
+open(r'C:\Users\kgash\portfolio\app\page.tsx', 'w', encoding='utf-8').write(content)
+print('Done')

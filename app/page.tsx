@@ -25,11 +25,11 @@ export default async function HomePage() {
               <div className="flex items-center gap-1.5 bg-base-800 border border-border rounded-full px-3 py-1">
                 <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
                 <span className="text-xs font-mono text-text-secondary">
-                  Building LUMA AIOS · Day {buildProgress.currentDay}/{buildProgress.totalDays}
+                  LUMA AIOS · Product Validation Phase
                 </span>
               </div>
               <div className="text-text-tertiary text-xs font-mono">
-                {buildProgress.percentComplete}% complete
+                B2B SaaS · Building Live
               </div>
             </div>
 
