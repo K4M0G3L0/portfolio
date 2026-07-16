@@ -7,52 +7,17 @@ import { timeAgo } from "@/lib/utils";
 import { LiveClock } from "@/components/ui/LiveClock";
 
 export const metadata: Metadata = {
-  title: "LUMA AIOS Live Build",
-  description: "Public engineering journal documenting the 90-day build of LUMA AIOS — an AI Operating System for business intelligence.",
+  title: "LUMA AIOS — Live Build",
+  description: "Public engineering journal documenting the build of LUMA AIOS — a B2B SaaS AI Operating System for operational businesses.",
 };
 
 export const revalidate = 300;
-
-const BUILD_START = new Date("2026-06-17T00:00:00+02:00");
-const TOTAL_DAYS = 90;
-
-function getAutoDay(): number {
-  const nowCAT = new Date(
-    new Date().toLocaleString("en-US", { timeZone: "Africa/Johannesburg" })
-  );
-  const startCAT = new Date(
-    BUILD_START.toLocaleString("en-US", { timeZone: "Africa/Johannesburg" })
-  );
-  const msPerDay = 1000 * 60 * 60 * 24;
-  const day = Math.floor((nowCAT.getTime() - startCAT.getTime()) / msPerDay) + 1;
-  return Math.max(1, Math.min(day, TOTAL_DAYS));
-}
-
-const MODULE_DESCRIPTIONS: Record<string, string> = {
-  "Core Architecture": "FastAPI backend, React frontend, PostgreSQL, JWT auth",
-  "Business DNA Engine": "Organizations, profiles, capabilities, certifications",
-  "Memory Core": "Structured memory, vector embeddings, RAG pipeline",
-  "Multi-Agent Framework": "CEO + Procurement + Finance + Logistics + Security agents",
-  "BloomOS Intelligence": "Tender scoring, bid decisions, compliance checking",
-  "Command Center": "Dashboard, LUMA Score, agent monitoring, AI insights",
-  "Transparency Engine": "Decision Passports, evidence tracing, confidence scoring",
-  "Action Intelligence Engine": "Proactive events, priority scoring, smart notifications",
-  "Flowlink — Execution Intelligence": "Event-driven execution: TenderWon event bus, project activation, suppliers, milestones",
-  "MoneyOS": "Invoice intelligence, cashflow analysis, financial risk",
-  "BuildOS": "Construction AI, CIDB compliance, project scheduling",
-  "Security Intelligence": "Fraud detection, supplier verification, POPIA",
-  "Cloud Deployment": "AWS/GCP production, monitoring, scaling, CDN",
-  "Platform Launch": "Public beta, onboarding, documentation",
-};
 
 export default async function BuildPage() {
   const [progress, commits] = await Promise.all([
     getBuildProgress(),
     getRecentCommits("luma-aios", 15),
   ]);
-
-  const currentDay = getAutoDay();
-  const percentComplete = Math.round((currentDay / TOTAL_DAYS) * 100);
 
   return (
     <div className="max-w-7xl mx-auto px-6 py-16">
@@ -62,94 +27,132 @@ export default async function BuildPage() {
         <div className="flex items-center justify-between flex-wrap gap-4 mb-6">
           <div className="flex items-center gap-2">
             <Badge variant="emerald">Live Build</Badge>
-            <Badge variant="outline">Public · 90 Days</Badge>
+            <Badge variant="outline">B2B SaaS Platform</Badge>
           </div>
           <LiveClock />
         </div>
 
         <h1 className="text-4xl md:text-5xl font-medium text-text-primary mb-4 leading-tight">
           Building LUMA AIOS<br />
-          <span className="text-text-secondary font-light">in public, from Day 1.</span>
+          <span className="text-text-secondary font-light">in public. Commit by commit.</span>
         </h1>
         <p className="text-text-secondary text-lg max-w-2xl leading-relaxed">
-          An AI Operating System for business intelligence. Documented commit by commit,
-          decision by decision, for 90 days. This is the engineering journal.
+          An AI Operating System for operational businesses. Construction is the first vertical.
+          The platform is reusable across industries. This is the engineering and business journal.
         </p>
       </div>
 
-      {/* Progress Overview */}
+      {/* Phase Cards — replace the day counter */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-12">
 
-        <div className="md:col-span-2 bg-base-800 border border-border rounded-xl p-6">
-          <div className="flex items-start justify-between mb-6">
-            <div>
-              <div className="text-xs font-mono text-text-tertiary uppercase tracking-widest mb-1">Current Day</div>
-              <div className="flex items-baseline gap-2">
-                <span className="text-5xl font-medium text-text-primary">{currentDay}</span>
-                <span className="text-text-tertiary text-xl">/ {TOTAL_DAYS}</span>
-              </div>
-            </div>
-            <div className="text-right">
-              <div className="text-xs font-mono text-text-tertiary uppercase tracking-widest mb-1">Complete</div>
-              <div className="text-3xl font-medium gradient-text">{percentComplete}%</div>
-            </div>
-          </div>
-          <div className="w-full h-2 bg-base-700 rounded-full overflow-hidden mb-4">
-            <div
-              className="h-full bg-gradient-to-r from-accent-violet to-accent-cyan rounded-full transition-all"
-              style={{ width: `${percentComplete}%` }}
-            />
-          </div>
-          <div className="flex justify-between text-xs font-mono text-text-tertiary">
-            <span>Day 1 · 17 Jun 2026</span>
-            <span>Day 90 · Launch</span>
-          </div>
-        </div>
-
-        <div className="bg-base-800 border border-border rounded-xl p-6">
-          <div className="text-xs font-mono text-text-tertiary uppercase tracking-widest mb-2">Active Module</div>
-          <div className="text-text-primary font-medium mb-1">{progress.currentModule}</div>
+        {/* Current Phase */}
+        <div className="bg-base-800 border border-accent-violet/30 rounded-xl p-6 relative overflow-hidden">
+          <div className="absolute top-0 left-0 right-0 h-0.5 bg-gradient-to-r from-accent-violet to-accent-cyan" />
+          <div className="text-xs font-mono text-text-tertiary uppercase tracking-widest mb-2">Current Phase</div>
+          <div className="text-text-primary font-semibold text-lg mb-1">Product Validation</div>
           <div className="text-text-tertiary text-xs leading-relaxed">
-            {MODULE_DESCRIPTIONS[progress.currentModule] || "In progress"}
+            Customer discovery interviews. Validating the operating system of a construction business before scaling.
           </div>
           <div className="mt-4 flex items-center gap-2">
-            <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
-            <span className="text-xs text-emerald-400 font-mono">Building</span>
+            <span className="w-2 h-2 rounded-full bg-accent-violet animate-pulse" />
+            <span className="text-xs text-accent-violet font-mono">Phase 2 of 4</span>
           </div>
         </div>
 
+        {/* Current Sprint */}
         <div className="bg-base-800 border border-border rounded-xl p-6">
-          {progress.stats ? (
-            <>
-              <div className="text-xs font-mono text-text-tertiary uppercase tracking-widest mb-4">
-                GitHub · luma-aios
-              </div>
-              <div className="space-y-2">
-                <div className="flex justify-between text-sm">
-                  <span className="text-text-tertiary">Stars</span>
-                  <span className="text-text-primary font-mono">{progress.stats.stars}</span>
-                </div>
-                <div className="flex justify-between text-sm">
-                  <span className="text-text-tertiary">Language</span>
-                  <span className="text-text-primary font-mono">{progress.stats.language}</span>
-                </div>
-                <div className="flex justify-between text-sm">
-                  <span className="text-text-tertiary">Last push</span>
-                  <span className="text-text-primary font-mono">{timeAgo(progress.stats.lastCommit)}</span>
-                </div>
-              </div>
-            </>
-          ) : (
-            <div className="text-text-tertiary text-xs">GitHub stats unavailable</div>
-          )}
-          <a
-            href="https://github.com/K4M0G3L0/luma-aios"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="mt-4 block text-center text-xs font-mono text-accent-violet hover:text-accent-violet-dim transition-colors"
-          >
-            View repository →
-          </a>
+          <div className="text-xs font-mono text-text-tertiary uppercase tracking-widest mb-2">Current Sprint</div>
+          <div className="text-text-primary font-semibold mb-1">{progress.currentModule}</div>
+          <div className="text-text-tertiary text-xs leading-relaxed mb-4">
+            Platform foundation complete. Now validating with real customers.
+          </div>
+          <div className="flex items-center justify-between text-xs font-mono">
+            <span className="text-text-tertiary">Latest release</span>
+            <span className="text-emerald-400">v0.10.0-alpha</span>
+          </div>
+        </div>
+
+        {/* Next Milestone */}
+        <div className="bg-base-800 border border-border rounded-xl p-6">
+          <div className="text-xs font-mono text-text-tertiary uppercase tracking-widest mb-2">Next Milestone</div>
+          <div className="text-text-primary font-semibold mb-1">Private Alpha</div>
+          <div className="text-text-tertiary text-xs leading-relaxed mb-4">
+            2-3 pilot companies running LUMA on live tenders and projects.
+          </div>
+          <div className="flex items-center justify-between text-xs font-mono">
+            <span className="text-text-tertiary">Interviews completed</span>
+            <span className="text-text-primary">0 / 20</span>
+          </div>
+        </div>
+
+        {/* North Star */}
+        <div className="bg-base-800 border border-emerald-500/20 rounded-xl p-6 relative overflow-hidden">
+          <div className="absolute top-0 left-0 right-0 h-0.5 bg-emerald-400/40" />
+          <div className="text-xs font-mono text-text-tertiary uppercase tracking-widest mb-2">North Star Goal</div>
+          <div className="text-text-primary font-semibold text-lg mb-1">First Paying Customer</div>
+          <div className="text-text-tertiary text-xs leading-relaxed">
+            One construction company paying R4,500/month for BloomOS + MoneyOS.
+          </div>
+          <div className="mt-4 flex items-center gap-2">
+            <span className="w-2 h-2 rounded-full bg-emerald-400" />
+            <span className="text-xs text-emerald-400 font-mono">Target: next 30 days</span>
+          </div>
+        </div>
+      </div>
+
+      {/* Platform Status Bar */}
+      <div className="bg-base-800 border border-border rounded-xl p-6 mb-12">
+        <div className="flex items-center justify-between mb-4 flex-wrap gap-4">
+          <div>
+            <div className="text-xs font-mono text-text-tertiary uppercase tracking-widest mb-1">Platform Status</div>
+            <div className="text-text-primary font-medium">Core Intelligence Layer — 10 modules complete</div>
+          </div>
+          <div className="flex items-center gap-6 text-xs font-mono">
+            <div className="text-center">
+              <div className="text-text-primary font-semibold text-lg">80</div>
+              <div className="text-text-tertiary">tests passing</div>
+            </div>
+            <div className="text-center">
+              <div className="text-text-primary font-semibold text-lg">10</div>
+              <div className="text-text-tertiary">modules</div>
+            </div>
+            <div className="text-center">
+              <div className="text-text-primary font-semibold text-lg">5</div>
+              <div className="text-text-tertiary">AI agents</div>
+            </div>
+            <div className="text-center">
+              <div className="text-text-primary font-semibold text-lg">53+</div>
+              <div className="text-text-tertiary">API routes</div>
+            </div>
+          </div>
+        </div>
+
+        {/* Module completion grid */}
+        <div className="grid grid-cols-2 md:grid-cols-5 gap-2">
+          {[
+            { name: "Core", done: true },
+            { name: "Memory", done: true },
+            { name: "Agents", done: true },
+            { name: "BloomOS", done: true },
+            { name: "Transparency", done: true },
+            { name: "Action Engine", done: true },
+            { name: "Flowlink", done: true },
+            { name: "MoneyOS", done: true },
+            { name: "BuildOS", done: true },
+            { name: "CapitalOS", done: false },
+          ].map((m) => (
+            <div
+              key={m.name}
+              className={`flex items-center gap-2 px-3 py-2 rounded-lg text-xs font-mono ${
+                m.done
+                  ? "bg-emerald-400/5 border border-emerald-400/20 text-emerald-400"
+                  : "bg-base-700/50 border border-border text-text-tertiary"
+              }`}
+            >
+              <span>{m.done ? "✓" : "○"}</span>
+              {m.name}
+            </div>
+          ))}
         </div>
       </div>
 
@@ -265,50 +268,63 @@ export default async function BuildPage() {
 
       {/* System Architecture */}
       <div className="mt-16">
-        <h2 className="text-lg font-medium text-text-primary mb-8">System Architecture</h2>
+        <h2 className="text-lg font-medium text-text-primary mb-8">Platform Architecture</h2>
         <div className="bg-base-800 border border-border rounded-xl p-8">
-          <div className="grid grid-cols-1 md:grid-cols-5 gap-6 items-center">
-            <div className="md:col-span-1 bg-base-700 border border-accent-violet/30 rounded-lg p-4 text-center">
-              <div className="text-xs font-mono text-accent-violet mb-1 uppercase tracking-widest">Core</div>
-              <div className="text-text-primary font-medium text-sm">LUMA AIOS</div>
-              <div className="text-text-tertiary text-xs mt-1">AI OS</div>
+
+          {/* Three layer diagram */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+            <div className="space-y-2">
+              <div className="text-xs font-mono text-text-tertiary uppercase tracking-widest mb-3">Core Platform</div>
+              {["CEO Agent", "Memory Core", "Event Bus", "Transparency", "Identity + RBAC", "Analytics"].map(m => (
+                <div key={m} className="text-xs px-3 py-1.5 rounded-md bg-accent-violet/5 border border-accent-violet/20 text-accent-violet font-mono">{m}</div>
+              ))}
             </div>
 
-            <div className="hidden md:flex md:col-span-1 items-center justify-center">
-              <div className="text-text-tertiary">→</div>
-            </div>
-
-            <div className="md:col-span-3 grid grid-cols-2 gap-3">
+            <div className="space-y-2">
+              <div className="text-xs font-mono text-text-tertiary uppercase tracking-widest mb-3">Business Layer</div>
               {[
-                { name: "BloomOS",  label: "Opportunities", color: "#10B981" },
-                { name: "Flowlink", label: "Execution",     color: "#06B6D4" },
-                { name: "MoneyOS",  label: "Finance",       color: "#F59E0B" },
-                { name: "BuildOS",  label: "Construction",  color: "#8B5CF6" },
-              ].map((s) => (
-                <div
-                  key={s.name}
-                  className="border rounded-lg p-3"
-                  style={{ borderColor: `${s.color}30`, background: `${s.color}08` }}
-                >
-                  <div className="text-sm font-medium" style={{ color: s.color }}>{s.name}</div>
-                  <div className="text-text-tertiary text-xs">{s.label}</div>
+                { name: "BloomOS", label: "Opportunities" },
+                { name: "Flowlink", label: "Operations" },
+                { name: "MoneyOS", label: "Finance" },
+              ].map(m => (
+                <div key={m.name} className="text-xs px-3 py-1.5 rounded-md bg-emerald-400/5 border border-emerald-400/20 text-emerald-400 font-mono flex justify-between">
+                  <span>{m.name}</span><span className="text-text-tertiary">{m.label}</span>
+                </div>
+              ))}
+            </div>
+
+            <div className="space-y-2">
+              <div className="text-xs font-mono text-text-tertiary uppercase tracking-widest mb-3">Industry Layer</div>
+              {[
+                { name: "BuildOS", label: "Construction", live: true },
+                { name: "RouteOS", label: "Logistics", live: false },
+                { name: "HealthOS", label: "Healthcare", live: false },
+                { name: "FactoryOS", label: "Manufacturing", live: false },
+              ].map(m => (
+                <div key={m.name} className={`text-xs px-3 py-1.5 rounded-md border font-mono flex justify-between ${
+                  m.live
+                    ? "bg-cyan-400/5 border-cyan-400/20 text-cyan-400"
+                    : "bg-base-700/50 border-border text-text-tertiary"
+                }`}>
+                  <span>{m.name}</span>
+                  <span>{m.live ? "Live" : m.label}</span>
                 </div>
               ))}
             </div>
           </div>
 
-          <div className="mt-6 pt-6 border-t border-border">
+          <div className="pt-6 border-t border-border">
             <div className="flex flex-wrap gap-4 text-xs font-mono text-text-tertiary">
               <span>FastAPI · Python 3.12</span>
-              <span>React 18 · Vite</span>
+              <span>React 18 · Next.js</span>
               <span>PostgreSQL 16</span>
               <span>SQLAlchemy 2.0</span>
               <span>Anthropic Claude</span>
               <span>JWT Auth · RBAC</span>
               <span>Vector Embeddings</span>
-              <span>RAG Pipeline</span>
-              <span>13,000+ lines of code</span>
-              <span>53 API endpoints</span>
+              <span>Event-Driven Architecture</span>
+              <span>80+ tests passing</span>
+              <span>53+ API endpoints</span>
             </div>
           </div>
         </div>
@@ -316,21 +332,21 @@ export default async function BuildPage() {
 
       {/* CTA */}
       <div className="mt-16 text-center">
-        <p className="text-text-secondary mb-4">This build updates every time I push code.</p>
+        <p className="text-text-secondary mb-4">
+          Are you running a construction or operational business in South Africa?
+        </p>
         <div className="flex items-center justify-center gap-4 flex-wrap">
-          <a
-            href="https://github.com/K4M0G3L0/luma-aios"
-            target="_blank"
-            rel="noopener noreferrer"
+          <Link
+            href="/demo"
+            className="inline-flex items-center gap-2 bg-accent-violet text-white px-5 py-2.5 rounded-lg text-sm font-medium hover:bg-accent-violet-dim transition-colors"
+          >
+            See the live demo →
+          </Link>
+          <Link
+            href="/contact"
             className="inline-flex items-center gap-2 bg-base-800 border border-border text-text-primary px-5 py-2.5 rounded-lg text-sm hover:border-border-strong transition-colors"
           >
-            Star the repo
-          </a>
-          <Link
-            href="/writing"
-            className="inline-flex items-center gap-2 text-text-secondary hover:text-text-primary text-sm transition-colors"
-          >
-            Read the engineering articles →
+            Book a discovery call
           </Link>
         </div>
       </div>
